@@ -52,7 +52,7 @@ pub async fn start_ai_match(
     );
 
     tokio::spawn(async move {
-        if human_is_white {
+        let (_res, p1, p2) = if human_is_white {
             run_match(
                 ai_participant,
                 Participant::Human(session),
@@ -61,7 +61,7 @@ pub async fn start_ai_match(
                 active_matches,
                 history_registry,
             )
-            .await;
+            .await
         } else {
             run_match(
                 Participant::Human(session),
@@ -71,7 +71,12 @@ pub async fn start_ai_match(
                 active_matches,
                 history_registry,
             )
-            .await;
+            .await
+        };
+
+        let human_participant = if human_is_white { p2 } else { p1 };
+        if let Participant::Human(h) = human_participant {
+            let _ = h.handle.send(crate::protocol::ServerCommand::Bye { stats: Vec::new() });
         }
     });
 }
