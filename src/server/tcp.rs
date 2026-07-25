@@ -130,18 +130,18 @@ async fn handle_tcp_client(
 
     match mode {
         TcpMode::FreeMatch => {
-            enqueue_freematch_session(freematch_queue, active_session, 1000, PreferredColor::Random, active_matches, history_registry).await;
+            enqueue_freematch_session(freematch_queue, active_session, super::DEFAULT_TIME_MS, PreferredColor::Random, active_matches, history_registry).await;
         }
         TcpMode::Room { room_id } => {
-            join_room_session(room_mgr, room_id, active_session, 1000).await;
+            join_room_session(room_mgr, room_id, active_session, super::DEFAULT_TIME_MS).await;
         }
         TcpMode::ClientWaitHuman => {
             let mut queue = wait_human_queue.lock().await;
-            let id = queue.register(active_session, 1000);
+            let id = queue.register(active_session, super::DEFAULT_TIME_MS);
             info!("TCP Client registered to wait for human match: ID {id}");
         }
         TcpMode::Ai { ai_type } => {
-            start_ai_match(active_session, ai_type, 1000, PreferredColor::Random, active_matches, history_registry).await;
+            start_ai_match(active_session, ai_type, super::DEFAULT_TIME_MS, PreferredColor::Random, active_matches, history_registry).await;
         }
     }
 }

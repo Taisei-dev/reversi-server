@@ -162,11 +162,13 @@ async fn get_history_handler(
     })
 }
 
+use super::{DEFAULT_COOLDOWN_SEC, DEFAULT_TIME_MS};
+
 async fn create_room_handler(
     State(state): State<AppState>,
     Json(req): Json<CreateRoomRequest>,
 ) -> Json<ApiResponse> {
-    let time_ms = req.time_ms.unwrap_or(1000);
+    let time_ms = req.time_ms.unwrap_or(DEFAULT_TIME_MS);
     let match_count = req.match_count.unwrap_or(1);
     let mut mgr = state.room_mgr.lock().await;
     mgr.get_or_create(&req.room_id, time_ms, match_count);
@@ -229,8 +231,8 @@ async fn ws_freematch_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
-    let cooldown_sec = query.cooldown_sec.unwrap_or(10);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
+    let cooldown_sec = query.cooldown_sec.unwrap_or(DEFAULT_COOLDOWN_SEC);
     let color = PreferredColor::from_str(query.color.as_deref().unwrap_or("random"));
     ws.on_upgrade(move |socket| handle_websocket(socket, WsMode::FreeMatch { cooldown_sec }, assigned_time, color, state))
 }
@@ -241,7 +243,7 @@ async fn ws_room_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
     let color = PreferredColor::from_str(query.color.as_deref().unwrap_or("random"));
     ws.on_upgrade(move |socket| handle_websocket(socket, WsMode::Room { room_id }, assigned_time, color, state))
 }
@@ -251,7 +253,7 @@ async fn ws_client_wait_human_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
     ws.on_upgrade(move |socket| handle_websocket(socket, WsMode::ClientWaitHuman, assigned_time, PreferredColor::Random, state))
 }
 
@@ -261,7 +263,7 @@ async fn ws_vs_human_join_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
     let color = PreferredColor::from_str(query.color.as_deref().unwrap_or("random"));
     ws.on_upgrade(move |socket| handle_websocket(socket, WsMode::VsHumanJoin { client_id }, assigned_time, color, state))
 }
@@ -271,7 +273,7 @@ async fn ws_ai_random_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
     let color = PreferredColor::from_str(query.color.as_deref().unwrap_or("random"));
     ws.on_upgrade(move |socket| handle_websocket(socket, WsMode::Ai { ai_type: AiType::Random }, assigned_time, color, state))
 }
@@ -281,7 +283,7 @@ async fn ws_ai_egaroucid_handler(
     State(state): State<AppState>,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let assigned_time = query.time_ms.unwrap_or(1000);
+    let assigned_time = query.time_ms.unwrap_or(DEFAULT_TIME_MS);
     let level = query.level.unwrap_or(3).clamp(0, 20);
     let use_book = query.use_book.unwrap_or(true);
     let color = PreferredColor::from_str(query.color.as_deref().unwrap_or("random"));

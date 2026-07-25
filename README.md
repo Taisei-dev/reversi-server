@@ -74,11 +74,11 @@ Proxy で指定可能なパスおよびクエリパラメータの一覧です�
 
 | モード / 用途 | 接続 URL パス | クエリパラメータ | デフォルト値 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| フリーマッチ | `/client/freematch` | `time_ms`<br>`cooldown_sec`<br>`color` | `1000`<br>`10`<br>`random` | 自動対戦キュー。`cooldown_sec` 秒間は同一対戦相手との再マッチを回避 |
-| ルーム対戦 | `/client/room/<ROOM_ID>` | `time_ms`<br>`color` | `1000`<br>`random` | 指定ルームへ参加待機。Web UI からスタートして総当たり戦を実施 |
-| Clientと対戦 待機 | `/client/vs-human` | `time_ms` | `1000` | 人間 (Web UI) との対戦待機。対局終了後は自動で待機キューに復帰 |
-| vs Egaroucid AI | `/client/ai/egaroucid` | `level`<br>`use_book`<br>`time_ms`<br>`color` | `7`<br>`true`<br>`1000`<br>`random` | Egaroucid AI と対局。`level` 0〜20 、`use_book` で強さを調整 |
-| vs Random AI | `/client/ai/random` | `time_ms`<br>`color` | `1000`<br>`random` | ランダムに指し手を選ぶ AI と対局 |
+| フリーマッチ | `/client/freematch` | `time_ms`<br>`cooldown_sec`<br>`color` | `60000` (1分)<br>`300` (5分)<br>`random` | 自動対戦キュー。`cooldown_sec` 秒間は同一対戦相手との再マッチを回避 |
+| ルーム対戦 | `/client/room/<ROOM_ID>` | `time_ms`<br>`color` | `60000` (1分)<br>`random` | 指定ルームへ参加待機。Web UI からスタートして総当たり戦を実施 |
+| Clientと対戦 待機 | `/client/vs-human` | `time_ms` | `60000` (1分) | 人間 (Web UI) との対戦待機。対局終了後は自動で待機キューに復帰 |
+| vs Egaroucid AI | `/client/ai/egaroucid` | `level`<br>`use_book`<br>`time_ms`<br>`color` | `7`<br>`true`<br>`60000` (1分)<br>`random` | Egaroucid AI と対局。`level` 0〜20 、`use_book` で強さを調整 |
+| vs Random AI | `/client/ai/random` | `time_ms`<br>`color` | `60000` (1分)<br>`random` | ランダムに指し手を選ぶ AI と対局 |
 
 ### クエリパラメータの詳細
 

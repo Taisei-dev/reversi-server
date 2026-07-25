@@ -23,7 +23,7 @@ export const FreematchSection: React.FC<FreematchSectionProps> = ({
             接続されているclient同士が自動でマッチングされて対戦します。<br />
             勝負が行われた2つのclientが接続し続けてたいる場合は、クールダウン時間経過後に再度マッチングされます。<br />
             クールダウン時間はurlのパラメータで指定できます。<br />
-            例: <code>?cooldown_sec=10</code> (10秒)
+            例: <code>?cooldown_sec=300</code> (300秒 = 5分)
           </span>
         </span>
       </h2>

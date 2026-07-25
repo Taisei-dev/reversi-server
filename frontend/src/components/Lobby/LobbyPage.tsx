@@ -19,6 +19,7 @@ import { VsAiSection } from './VsAiSection';
 import { ActiveMatchesSection } from './ActiveMatchesSection';
 import { RecentHistorySection } from './RecentHistorySection';
 import { LobbyModals } from './LobbyModals';
+import { DEFAULT_TIME_MS } from '../../config/constants';
 
 interface LobbyPageProps {
   onStartGame: (config: GameConfig) => void;
@@ -53,9 +54,8 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
   const [vsHumanColor, setVsHumanColor] = useState<PlayerColor>('black');
   const [selectedCellMatches, setSelectedCellMatches] = useState<TournamentMatchDetail[] | null>(null);
   const [expandedTournaments, setExpandedTournaments] = useState<{ [key: number]: boolean }>({});
-
   const [newRoomId, setNewRoomId] = useState('1');
-  const [newRoomTimeMs, setNewRoomTimeMs] = useState(1000);
+  const [newRoomTimeMs, setNewRoomTimeMs] = useState(DEFAULT_TIME_MS);
   const [newRoomMatchCount, setNewRoomMatchCount] = useState(1);
 
   const [aiType, setAiType] = useState<'random' | 'egaroucid'>('egaroucid');
