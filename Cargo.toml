@@ -1,0 +1,25 @@
+[package]
+name = "reversi-server"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-only"
+
+[features]
+default = []
+egaroucid = []
+
+[dependencies]
+tokio = { version = "1.38", features = ["full"] }
+axum = { version = "0.7", features = ["ws"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rand = "0.8"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+futures = "0.3"
+tokio-util = { version = "0.7", features = ["codec"] }
+
+[build-dependencies]
+cmake = "0.1"
+cc = "1.0"
