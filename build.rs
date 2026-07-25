@@ -23,6 +23,17 @@ fn main() {
             build.define("HAS_NO_AVX2", None);
         }
 
+        #[cfg(target_arch = "x86_64")]
+        {
+            build.flag_if_supported("-mavx2");
+            build.flag_if_supported("-mfma");
+            build.flag_if_supported("-mbmi");
+            build.flag_if_supported("-mbmi2");
+            build.flag_if_supported("-mpopcnt");
+            build.flag_if_supported("-lzcnt");
+            build.flag_if_supported("/arch:AVX2");
+        }
+
         build.compile("egaroucid");
 
         #[cfg(target_os = "macos")]
