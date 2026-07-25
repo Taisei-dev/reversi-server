@@ -119,11 +119,12 @@ Proxyの起動コマンド構文：
 ```
 reversi-server/
 ├── src/               # Rust サーバー本体
-├── dist/              # ビルド済み Web UI (cargo run で自動配信)
-├── frontend/          # Web UI ソース (React + TypeScript)
+├── dist/              # Web UI ビルド成果物 (frontend ビルド時に自動生成、Git管理外)
+├── frontend/          # Web UI ソースコード (React + TypeScript)
 ├── Egaroucid/         # Egaroucid AI エンジン (git submodule)
 ├── build.rs           # cc クレートで Egaroucid C++ を静的ビルド
 ├── Cargo.toml
+├── Cargo.lock
 ├── LICENSE
 └── README.md
 ```
@@ -137,6 +138,8 @@ C++ ライブラリ (`egaroucid_c_api.cpp`) を `build.rs` 経由で自動的に
 
 ## セットアップ & 起動
 
+初回起動時や Web UI を更新した際は、先に `frontend` のビルドを行ってください。
+
 ### 1. クローン（submodule 含む）
 
 ```bash
@@ -145,7 +148,16 @@ git clone --recurse-submodules <このリポジトリのURL>
 git submodule update --init --recursive
 ```
 
-### 2. サーバーの起動
+### 2. Web UI のビルド
+
+```bash
+cd frontend
+npm install
+npm run build   # ../dist/ ディレクトリへビルド出力
+cd ..
+```
+
+### 3. サーバーの起動
 
 ```bash
 cargo run
@@ -156,13 +168,6 @@ Egaroucid の C++ ソースを初回ビルド時にコンパイルするため�
 - Web UI (ロビー画面): http://localhost:8080
 - Client WebSocket Bridge: `ws://localhost:8080/client/...`
 
-### 3. Web UI のビルド（開発時）
-
-```bash
-cd frontend
-npm install
-npm run build   # ../dist/ に出力
-```
 
 ---
 
