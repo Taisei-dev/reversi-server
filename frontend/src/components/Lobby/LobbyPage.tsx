@@ -3,7 +3,6 @@ import type {
   LobbyData,
   HistoryData,
   GameConfig,
-  PlayerColor,
   TournamentMatchDetail,
   WaitingClientInfo,
   RoomInfo,
@@ -20,7 +19,7 @@ import { ActiveMatchesSection } from './ActiveMatchesSection';
 import { RecentHistorySection } from './RecentHistorySection';
 import { LobbyModals } from './LobbyModals';
 import { DEFAULT_TIME_MS } from '../../config/constants';
-import { DEFAULT_PREFERENCES } from '../../hooks/usePreferences';
+import { DEFAULT_PREFERENCES, usePreferences } from '../../hooks/usePreferences';
 
 interface LobbyPageProps {
   onStartGame: (config: GameConfig) => void;
@@ -41,8 +40,8 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
   const [copiedUrlType, setCopiedUrlType] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { prefs, update } = usePreferences();
 
-  const [playerName, setPlayerName] = useState('Player_Web');
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<RoomInfo | null>(null);
   const [editMatchCount, setEditMatchCount] = useState(1);
@@ -52,17 +51,11 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
   const [showStartAiModal, setShowStartAiModal] = useState(false);
 
   const [selectedClientForMatch, setSelectedClientForMatch] = useState<WaitingClientInfo | null>(null);
-  const [vsHumanColor, setVsHumanColor] = useState<PlayerColor>('black');
   const [selectedCellMatches, setSelectedCellMatches] = useState<TournamentMatchDetail[] | null>(null);
   const [expandedTournaments, setExpandedTournaments] = useState<{ [key: number]: boolean }>({});
   const [newRoomId, setNewRoomId] = useState('1');
   const [newRoomTimeMs, setNewRoomTimeMs] = useState(DEFAULT_TIME_MS);
   const [newRoomMatchCount, setNewRoomMatchCount] = useState(1);
-
-  const [aiType, setAiType] = useState<'random' | 'egaroucid'>('egaroucid');
-  const [aiLevel, setAiLevel] = useState(7);
-  const [aiUseBook, setAiUseBook] = useState(true);
-  const [playerColor, setPlayerColor] = useState<PlayerColor>('black');
 
   const fetchLobbyAndHistory = async () => {
     setIsRefreshing(true);
@@ -100,7 +93,7 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
     const target = selectedClientForMatch;
     setSelectedClientForMatch(null);
     onStartGame({
-      preferences: { playerName, color: vsHumanColor, aiType, aiLevel, aiUseBook },
+      preferences: prefs,
       mode: 'vs-human',
       targetClientId: target.client_id,
       timeMs: target.assigned_time_ms,
@@ -111,8 +104,8 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
     e.preventDefault();
     setShowStartAiModal(false);
     onStartGame({
-      preferences: { playerName, color: playerColor, aiType, aiLevel, aiUseBook },
-      mode: aiType === 'random' ? 'vs-ai' : 'vs-ai-egaroucid',
+      preferences: prefs,
+      mode: prefs.aiType === 'random' ? 'vs-ai' : 'vs-ai-egaroucid',
       timeMs: 86400000,
     });
   };
@@ -183,9 +176,9 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ai_type: aiType,
-          level: aiLevel,
-          use_book: aiUseBook,
+          ai_type: prefs.aiType,
+          level: prefs.aiLevel,
+          use_book: prefs.aiUseBook,
         }),
       });
       if (res.ok) fetchLobbyAndHistory();
@@ -260,14 +253,11 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
           <div className="lobby-column">
             <VsHumanSection
               waitingClients={lobbyData.waiting_clients}
-              playerName={playerName}
-              onChangePlayerName={setPlayerName}
+              playerName={prefs.playerName}
+              onChangePlayerName={(name) => update({ playerName: name })}
               copiedUrlType={copiedUrlType}
               onCopyUrl={copyClientProxyUrl}
-              onSelectClient={(client) => {
-                setSelectedClientForMatch(client);
-                setVsHumanColor('black');
-              }}
+              onSelectClient={setSelectedClientForMatch}
             />
 
             <VsAiSection
@@ -338,19 +328,17 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
         showStartAiModal={showStartAiModal}
         onCloseStartAiModal={() => setShowStartAiModal(false)}
         onStartAiSubmit={handleStartVsAi}
-        aiType={aiType}
-        onChangeAiType={setAiType}
-        aiLevel={aiLevel}
-        onChangeAiLevel={setAiLevel}
-        aiUseBook={aiUseBook}
-        onChangeAiUseBook={setAiUseBook}
-        playerColor={playerColor}
-        onChangePlayerColor={setPlayerColor}
+        aiType={prefs.aiType}
+        onChangeAiType={(val) => update({ aiType: val })}
+        aiLevel={prefs.aiLevel}
+        onChangeAiLevel={(val) => update({ aiLevel: val || 0 })}
+        aiUseBook={prefs.aiUseBook}
+        onChangeAiUseBook={(val) => update({ aiUseBook: val })}
+        playerColor={prefs.color}
+        onChangePlayerColor={(val) => update({ color: val })}
         selectedClientForMatch={selectedClientForMatch}
         onCloseVsHumanModal={() => setSelectedClientForMatch(null)}
         onConfirmStartVsHuman={handleConfirmStartVsHuman}
-        vsHumanColor={vsHumanColor}
-        onChangeVsHumanColor={setVsHumanColor}
         selectedCellMatches={selectedCellMatches}
         onCloseCellMatchesModal={() => setSelectedCellMatches(null)}
         onReplayMatch={handleReplayMatch}

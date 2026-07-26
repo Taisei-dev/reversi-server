@@ -41,8 +41,6 @@ interface LobbyModalsProps {
   selectedClientForMatch: WaitingClientInfo | null;
   onCloseVsHumanModal: () => void;
   onConfirmStartVsHuman: (e: React.FormEvent) => void;
-  vsHumanColor: PlayerColor;
-  onChangeVsHumanColor: (val: PlayerColor) => void;
 
   selectedCellMatches: TournamentMatchDetail[] | null;
   onCloseCellMatchesModal: () => void;
@@ -89,8 +87,6 @@ export const LobbyModals: React.FC<LobbyModalsProps> = ({
   selectedClientForMatch,
   onCloseVsHumanModal,
   onConfirmStartVsHuman,
-  vsHumanColor,
-  onChangeVsHumanColor,
 
   selectedCellMatches,
   onCloseCellMatchesModal,
@@ -354,15 +350,15 @@ export const LobbyModals: React.FC<LobbyModalsProps> = ({
                 <div className="segmented-control">
                   <button
                     type="button"
-                    className={`segmented-btn ${vsHumanColor === 'black' ? 'active' : ''}`}
-                    onClick={() => onChangeVsHumanColor('black')}
+                    className={`segmented-btn ${playerColor === 'black' ? 'active' : ''}`}
+                    onClick={() => onChangePlayerColor('black')}
                   >
                     先手 (黒)
                   </button>
                   <button
                     type="button"
-                    className={`segmented-btn ${vsHumanColor === 'white' ? 'active' : ''}`}
-                    onClick={() => onChangeVsHumanColor('white')}
+                    className={`segmented-btn ${playerColor === 'white' ? 'active' : ''}`}
+                    onClick={() => onChangePlayerColor('white')}
                   >
                     後手 (白)
                   </button>
