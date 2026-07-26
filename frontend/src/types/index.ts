@@ -92,15 +92,13 @@ export interface GamePreferences {
   aiUseBook: boolean;
 }
 
+// 1対局を開始するための確定パラメータ
 export interface GameConfig {
-  playerName: string;
+  preferences: GamePreferences;
   mode: MatchMode;
+  timeMs: number;
   targetClientId?: string;
   roomId?: string;
-  aiLevel?: number;
-  aiUseBook?: boolean;
-  color: PlayerColor;
-  timeMs: number;
   replayMoves?: string[];
   replayBlackName?: string;
   replayWhiteName?: string;

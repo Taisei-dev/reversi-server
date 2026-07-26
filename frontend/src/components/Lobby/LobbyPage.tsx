@@ -20,6 +20,7 @@ import { ActiveMatchesSection } from './ActiveMatchesSection';
 import { RecentHistorySection } from './RecentHistorySection';
 import { LobbyModals } from './LobbyModals';
 import { DEFAULT_TIME_MS } from '../../config/constants';
+import { DEFAULT_PREFERENCES } from '../../hooks/usePreferences';
 
 interface LobbyPageProps {
   onStartGame: (config: GameConfig) => void;
@@ -99,10 +100,9 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
     const target = selectedClientForMatch;
     setSelectedClientForMatch(null);
     onStartGame({
-      playerName,
+      preferences: { playerName, color: vsHumanColor, aiType, aiLevel, aiUseBook },
       mode: 'vs-human',
       targetClientId: target.client_id,
-      color: vsHumanColor,
       timeMs: target.assigned_time_ms,
     });
   };
@@ -111,11 +111,8 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
     e.preventDefault();
     setShowStartAiModal(false);
     onStartGame({
-      playerName,
+      preferences: { playerName, color: playerColor, aiType, aiLevel, aiUseBook },
       mode: aiType === 'random' ? 'vs-ai' : 'vs-ai-egaroucid',
-      aiLevel,
-      aiUseBook,
-      color: playerColor,
       timeMs: 86400000,
     });
   };
@@ -230,9 +227,8 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
 
   const handleReplayMatch = (moves: string[], blackName: string, whiteName: string) => {
     onStartGame({
-      playerName: 'Player_Web',
+      preferences: DEFAULT_PREFERENCES,
       mode: 'kifu-replay',
-      color: 'black',
       timeMs: 0,
       replayMoves: moves,
       replayBlackName: blackName,

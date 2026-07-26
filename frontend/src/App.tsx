@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import type { GameConfig } from './types';
+import { DEFAULT_PREFERENCES } from './hooks/usePreferences';
 import { LobbyPage } from './components/Lobby/LobbyPage';
 import { GamePage } from './components/Game/GamePage';
 import { HistoryPage } from './components/History/HistoryPage';
@@ -25,9 +26,8 @@ const MainRoutes: React.FC = () => {
   };
 
   const defaultConfig: GameConfig = {
-    playerName: 'Player_Web',
+    preferences: DEFAULT_PREFERENCES,
     mode: 'vs-ai-egaroucid',
-    color: 'black',
     timeMs: 86400000,
   };
 

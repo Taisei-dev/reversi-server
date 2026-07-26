@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { HistoryData, GameConfig, TournamentMatchDetail } from '../../types';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DEFAULT_PREFERENCES } from '../../hooks/usePreferences';
 
 interface HistoryPageProps {
   onStartGame: (config: GameConfig) => void;
@@ -46,9 +47,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onStartGame }) => {
 
   const handleReplayMatch = (moves: string[], blackName: string, whiteName: string) => {
     onStartGame({
-      playerName: 'Player_Web',
+      preferences: DEFAULT_PREFERENCES,
       mode: 'kifu-replay',
-      color: 'black',
       timeMs: 0,
       replayMoves: moves,
       replayBlackName: blackName,
