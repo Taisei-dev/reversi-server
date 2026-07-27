@@ -38,7 +38,7 @@ export const VsAiSection: React.FC<VsAiSectionProps> = ({
             <span>{copiedUrlType === 'ai-random' ? 'コピー完了' : 'ランダムAI 接続URL'}</span>
           </button>
           <span className="copy-url-tooltip">
-            {(typeof window !== 'undefined' ? window.location.host : 'localhost:8080') + '/client/ai/random'}
+            {(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080') + '/client/ai/random'}
           </span>
         </span>
 
@@ -51,7 +51,7 @@ export const VsAiSection: React.FC<VsAiSectionProps> = ({
             <span>{copiedUrlType === 'ai-egaroucid' ? 'コピー完了' : 'Egaroucid AI 接続URL'}</span>
           </button>
           <span className="copy-url-tooltip">
-            {(typeof window !== 'undefined' ? window.location.host : 'localhost:8080') + '/client/ai/egaroucid?level=7&use_book=true'}
+            {(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080') + '/client/ai/egaroucid?level=7&use_book=true'}
           </span>
         </span>
       </div>

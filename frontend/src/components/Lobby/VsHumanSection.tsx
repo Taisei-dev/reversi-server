@@ -65,7 +65,7 @@ export const VsHumanSection: React.FC<VsHumanSectionProps> = ({
               <span>{copiedUrlType === 'vs-human' ? 'コピー完了' : 'Client 接続URL'}</span>
             </button>
             <span className="copy-url-tooltip">
-              {(typeof window !== 'undefined' ? window.location.host : 'localhost:8080') + '/client/vs-human'}
+              {(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080') + '/client/vs-human'}
             </span>
           </span>
         </div>

@@ -39,7 +39,7 @@ export const FreematchSection: React.FC<FreematchSectionProps> = ({
             <span>{copiedUrlType === 'freematch' ? 'コピー完了' : 'フリーマッチ 接続URL'}</span>
           </button>
           <span className="copy-url-tooltip">
-            {(typeof window !== 'undefined' ? window.location.host : 'localhost:8080') + '/client/freematch'}
+            {(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080') + '/client/freematch'}
           </span>
         </span>
       </div>

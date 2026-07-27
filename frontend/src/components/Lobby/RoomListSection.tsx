@@ -69,7 +69,7 @@ export const RoomListSection: React.FC<RoomListSectionProps> = ({
                       <span>{copiedUrlType === `room-${room.room_id}` ? 'コピー完了' : '接続URL'}</span>
                     </button>
                     <span className="copy-url-tooltip">
-                      {(typeof window !== 'undefined' ? window.location.host : 'localhost:8080') + `/client/room/${room.room_id}`}
+                      {(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080') + `/client/room/${room.room_id}`}
                     </span>
                   </span>
                   {room.status === 'waiting' && (

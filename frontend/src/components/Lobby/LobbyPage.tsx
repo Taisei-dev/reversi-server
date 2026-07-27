@@ -80,8 +80,9 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ onStartGame }) => {
   }, []);
 
   const copyClientProxyUrl = (path: string, label: string) => {
-    const host = window.location.host;
-    navigator.clipboard.writeText(`${host}${path}`).then(() => {
+    const origin = window.location.origin;
+    const fullUrl = `${origin}${path}`;
+    navigator.clipboard.writeText(fullUrl).then(() => {
       setCopiedUrlType(label);
       setTimeout(() => setCopiedUrlType(null), 2000);
     });
