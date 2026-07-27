@@ -76,7 +76,19 @@ pub async fn start_ai_match(
 
         let human_participant = if human_is_white { p2 } else { p1 };
         if let Participant::Human(h) = human_participant {
-            let _ = h.handle.send(crate::protocol::ServerCommand::Bye { stats: Vec::new() });
+            let human_color = if human_is_white { crate::game::Color::White } else { crate::game::Color::Black };
+            let ai_color = human_color.opposite();
+            let human_stones = if human_is_white { _res.white_stones } else { _res.black_stones };
+            let wins = if _res.winner_color == Some(human_color) { 1 } else { 0 };
+            let loses = if _res.winner_color == Some(ai_color) { 1 } else { 0 };
+
+            let stat = crate::protocol::PlayerStat {
+                player_name: h.handle.player_name.clone(),
+                score: human_stones as i32,
+                wins,
+                loses,
+            };
+            let _ = h.handle.send(crate::protocol::ServerCommand::Bye { stats: vec![stat] });
         }
     });
 }
