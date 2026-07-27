@@ -2,7 +2,7 @@
 
 オセロ（リバーシ）の対局管理・総当たり戦トーナメント・AI（Egaroucid / Random）対戦・Web UI 観戦および全自動フリーマッチを提供する統合サーバーシステムです。
 
-サーバーは Port 8080 の Axum HTTP / WebSocket Bridge に一本化されており、TCP クライアント（Rust / OCaml 等）は軽量プロキシ (`reversi-proxy-rs` または `reversi-proxy-ml`) を経由して接続します。
+サーバーは Port 8080 の Axum HTTP / WebSocket Bridge に一本化されており、TCP クライアント（Rust / OCaml 等）は軽量プロキシ (`reversi-proxy`) を経由して接続します。
 
 ---
 ## 機能一覧
@@ -24,7 +24,7 @@
 自作クライアントプログラム（C, Rust, OCaml 等）は、ホストアドレスとポートでアクセスする 標準的な TCP ソケット通信で対局プロトコル（`OPEN`, `MOVE`, `START` など）を送受信します。  
 一方で、本サーバー（`reversi-server`）は Web UI から接続することと、パスを変えることで複数の入り口を設けるため WebSocket インターフェースで動作しています。
 
-Proxy (`reversi-proxy-rs` や `reversi-proxy-ml`) は、クライアントからの TCP 接続を受け付け、本サーバーの WebSocket 端点へ相互変換・中継する役割を担います。
+Proxy (`reversi-proxy`) は、クライアントからの TCP 接続を受け付け、本サーバーの WebSocket 端点へ相互変換・中継する役割を担います。
 
 ### 接続・利用手順のフロー
 
@@ -40,18 +40,12 @@ Proxy (`reversi-proxy-rs` や `reversi-proxy-ml`) は、クライアントから
 2. **Proxy の起動**
    ターミナルで Proxy を起動します。引数の順序は `<LOCAL_PORT>` `<TARGET_URL>` です。
    `<LOCAL_PORT>` は自作クライアントが接続するローカル TCP ポート番号、`<TARGET_URL>` は Web UI で取得した接続先 URL です。
-   `<LoCAL_PORT>` は任意の空いているポート番号を指定してください。  
+   `<LOCAL_PORT>` は任意の空いているポート番号を指定してください。  
    `<TARGET_URL>` は Web UI でコピーした URL をそのまま貼り付けます。
    プロキシのレポジトリの README を参照し、以下のように実行します。
-   Rust 版 と OCaml 版のどちらでも構いません。
    ```bash
-   # Rust 版
-   cd reversi-proxy/reversi-proxy-rs
+   cd reversi-proxy
    cargo run --release -- <LOCAL_PORT> <TARGET_URL>
-   # または
-   # OCaml 版
-   cd reversi-proxy/reversi-proxy-ml
-   dune exec ./proxy.exe -- <LOCAL_PORT> <TARGET_URL>
    ```
 3. **Client プログラムの起動**
    自作クライアントプログラムを起動し、Proxy がリッスンしているローカル TCP ポート (`localhost:<LOCAL_PORT>`) へ接続させます。
@@ -96,9 +90,8 @@ Proxy で指定可能なパスおよびクエリパラメータの一覧です�
 Proxyの起動コマンド構文：
 
 ```bash
-./proxy [-d|--debug] <LOCAL_PORT> <TARGET_URL>
+cargo run -- [-d|--debug] <LOCAL_PORT> <TARGET_URL>
 ```
-`./proxy`の部分はRust版かOCaml版かで異なります。  
 `-d` または `--debug` を指定すると、TCP ↔ WebSocket の通信内容をデバッグ出力します。
 
 引数はローカルの TCP ポート番号 (`<LOCAL_PORT>`) が先で、接続先のサーバー URL (`<TARGET_URL>`) が後になります。
@@ -107,10 +100,10 @@ Proxyの起動コマンド構文：
 
 | 目的 | コマンド例 |
 | :--- | :--- |
-| フリーマッチに参加する（ポート8000、クールダウン15秒） | `./proxy 8000 localhost:8080/client/freematch?cooldown_sec=15` |
-| ルーム 1 に接続（ポート8001） | `./proxy 8001 localhost:8080/client/room/1` |
-| Egaroucid Level 5 に先手で対局（ポート8002） | `./proxy 8002 "localhost:8080/client/ai/egaroucid?level=5&color=black"` |
-| clientとWeb UIで対戦（ポート8003、デバッグ表示あり） | `./proxy -d 8003 localhost:8080/client/vs-human` |
+| フリーマッチに参加する（ポート8000、クールダウン15秒） | `cargo run -- 8000 localhost:8080/client/freematch?cooldown_sec=15` |
+| ルーム 1 に接続（ポート8001） | `cargo run -- 8001 localhost:8080/client/room/1` |
+| Egaroucid Level 5 に先手で対局（ポート8002） | `cargo run -- 8002 "localhost:8080/client/ai/egaroucid?level=5&color=black"` |
+| clientとWeb UIで対戦（ポート8003、デバッグ表示あり） | `cargo run -- -d 8003 localhost:8080/client/vs-human` |
 
 ---
 
@@ -174,8 +167,8 @@ Egaroucid の C++ ソースを初回ビルド時にコンパイルするため�
 ## アーキテクチャ概要
 
 ```
-TCP Client ─── Proxy (rs/ml) ──┐
-                                 ├── WebSocket ─── Axum Server (Port 8080)
+TCP Client ─── Proxy (Rust) ───┐
+                                  ├── WebSocket ─── Axum Server (Port 8080)
 Web Browser ─────────────────── ┘         │
                                            ├── FreeMatch Queue
                                            ├── Room Manager (総当たり戦)
@@ -196,6 +189,7 @@ Web Browser ─────────────────── ┘       
 | Server → Client | `MOVE <POS>` | 相手の着手通知 |
 | Server → Client | `ACK` | 着手受理 |
 | Server → Client | `END <RESULT> <MY_STONES> <OPP_STONES> <REASON>` | 対局終了 |
+| Server → Client | `BYE <NAME_1> <SCORE_1> <WIN_1> <LOSE_1> ...` | 最終成績通知・セッション終了 |
 
 ---
 
