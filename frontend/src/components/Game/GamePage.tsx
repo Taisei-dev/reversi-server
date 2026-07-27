@@ -42,6 +42,7 @@ export const GamePage: React.FC<GamePageProps> = ({ config, onBackToLobby }) => 
   const wsRef = useRef<WebSocket | null>(null);
   const logConsoleRef = useRef<HTMLDivElement | null>(null);
   const isReplayMode = config.mode === 'kifu-replay';
+  const { playerName, color, aiLevel, aiUseBook } = config.preferences;
 
   const addLog = (msg: string, type: 'sys' | 'in' | 'out' | 'err' = 'sys') => {
     const time = new Date().toLocaleTimeString();
@@ -100,14 +101,13 @@ export const GamePage: React.FC<GamePageProps> = ({ config, onBackToLobby }) => 
 
     let path = '';
     if (config.mode === 'vs-human') {
-      path = `/ws/vs_human/join/${config.targetClientId}?color=${config.color}`;
+      path = `/ws/vs_human/join/${config.targetClientId}?color=${color}`;
     } else if (config.mode === 'vs-ai') {
-      path = `/ws/ai/random?color=${config.color}`;
+      path = `/ws/ai/random?color=${color}`;
     } else if (config.mode === 'vs-ai-egaroucid') {
-      const useBook = config.aiUseBook !== false;
-      path = `/ws/ai/egaroucid?level=${config.aiLevel ?? 3}&use_book=${useBook}&color=${config.color}`;
+      path = `/ws/ai/egaroucid?level=${aiLevel}&use_book=${aiUseBook}&color=${color}`;
     } else if (config.mode === 'room') {
-      path = `/client/room/${config.roomId || '1'}?color=${config.color}`;
+      path = `/client/room/${config.roomId || '1'}?color=${color}`;
     }
 
     const url = `${protocol}//${host}${path}`;
@@ -119,7 +119,7 @@ export const GamePage: React.FC<GamePageProps> = ({ config, onBackToLobby }) => 
     ws.onopen = () => {
       setStatusMsg('接続完了 (対戦待機)');
       addLog('WebSocket 接続成功', 'sys');
-      sendRaw(`OPEN ${config.playerName}`);
+      sendRaw(`OPEN ${playerName}`);
     };
 
     ws.onmessage = (event) => {
@@ -170,12 +170,12 @@ export const GamePage: React.FC<GamePageProps> = ({ config, onBackToLobby }) => 
       setCurrentViewStep(0);
 
       if (assignedColor === 1) {
-        setBlackName(config.playerName);
+        setBlackName(playerName);
         setWhiteName(oppName);
         setStatusMsg('あなたの番です (黒/先手)');
       } else {
         setBlackName(oppName);
-        setWhiteName(config.playerName);
+        setWhiteName(playerName);
         setStatusMsg('相手の思考中... (白/後手)');
       }
 

@@ -83,15 +83,22 @@ export interface HistoryData {
 export type PlayerColor = 'black' | 'white';
 export type MatchMode = 'vs-human' | 'vs-ai' | 'vs-ai-egaroucid' | 'room' | 'kifu-replay';
 
-export interface GameConfig {
+// 対局をまたいで持ち越されるユーザーの好み (localStorage に永続化される)
+export interface GamePreferences {
   playerName: string;
+  color: PlayerColor;
+  aiType: 'random' | 'egaroucid';
+  aiLevel: number;
+  aiUseBook: boolean;
+}
+
+// 1対局を開始するための確定パラメータ
+export interface GameConfig {
+  preferences: GamePreferences;
   mode: MatchMode;
+  timeMs: number;
   targetClientId?: string;
   roomId?: string;
-  aiLevel?: number;
-  aiUseBook?: boolean;
-  color: PlayerColor;
-  timeMs: number;
   replayMoves?: string[];
   replayBlackName?: string;
   replayWhiteName?: string;
