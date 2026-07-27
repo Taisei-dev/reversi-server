@@ -322,8 +322,11 @@ export const GamePage: React.FC<GamePageProps> = ({ config, onBackToLobby }) => 
   };
 
   const copyKifu = () => {
-    if (kifuMoves.length === 0) return;
-    const formattedKifu = kifuMoves.map((m) => m.toLowerCase()).join('');
+    const validMoves = kifuMoves.filter(
+      (m) => m.toUpperCase() !== 'PASS' && m.toUpperCase() !== 'GIVEUP'
+    );
+    if (validMoves.length === 0) return;
+    const formattedKifu = validMoves.map((m) => m.toLowerCase()).join('');
     navigator.clipboard.writeText(formattedKifu).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
